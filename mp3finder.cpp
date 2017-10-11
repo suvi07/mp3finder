@@ -1,6 +1,5 @@
 //Mp3 finder
 //Author: Suvrat Sanson
-
 #include<iostream>
 #include<dirent.h>     
 #include<string>
