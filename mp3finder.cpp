@@ -1,5 +1,6 @@
-//Mp3 finder
-//Author: Suvrat Sanson
+/*Mp3 finder program
+Author->  Suvrat Sanson*/
+
 #include<iostream>
 #include<dirent.h>     
 #include<string>
@@ -8,77 +9,77 @@
 using namespace std;
 class mp3file{
     private:
-    string fp;
-    string fn;
+    string f_path;
+    string f_name;
     public:
-    string show(){
-    return fp;
+    string showPath(){
+        return f_path;
     }
-    string showf(){
-    return fn;
+    string showFile(){
+        return f_name;
     } 
     mp3file(string filename,string path){
-    fn=filename;       
-    fp=path;
+        f_name=filename;       
+        f_path=path;
         
     }   
 };
 vector<mp3file> list;
 class dirfile{
     public:
-    DIR *direc;           
+    DIR *dir;           
     struct dirent *ent;
-    dirfile(string strin){
-    direc=opendir(strin.c_str());
+    dirfile(string s){
+        dir=opendir(s.c_str());
     }
     bool isDir(){
-    if(ent->d_type==4)
-    return true;
-    else 
-    return false;
+        if(ent->d_type==4)
+            return true;
+        else 
+            return false;
     }
     bool isMp3(){
-    if(ent->d_type==8){
-    string temp;
-    for(int i=strlen(ent->d_name)-4;i<strlen(ent->d_name);i++)
-    temp.push_back(ent->d_name[i]);
-    if(temp==".mp3")
-    return true;
-    else
-    return false;
-    }
-    else
-    return false;                   
-    }   
+        if(ent->d_type==8){
+            string temp;
+            for(int i=strlen(ent->d_name)-4;i<strlen(ent->d_name);i++)
+                temp.push_back(ent->d_name[i]);
+            if(temp==".mp3")
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;                   
+        }   
 };
-void mp3find(string strin){
-    dirfile d(strin);
-    if(d.direc!=NULL){
-    while((d.ent=readdir(d.direc))!=NULL){
-    if(strcmp(d.ent->d_name,".")==0 || strcmp(d.ent->d_name,"..")==0 || d.ent->d_name[0]=='.')            
-    continue;
-    if(d.isDir()){                                                                                        
-    string temp(d.ent->d_name);
-    temp=strin+"/"+temp; 
-    mp3find(temp);
+void mp3find(string s){
+    dirfile d(s);
+    if(d.dir!=NULL){
+        while((d.ent=readdir(d.dir))!=NULL){
+            if(strcmp(d.ent->d_name,".")==0 || strcmp(d.ent->d_name,"..")==0 || d.ent->d_name[0]=='.')            //skips the entities names '.','..' and '.*'
+                continue;
+            if(d.isDir()){                                                                                        //checks for directory
+                string temp(d.ent->d_name);
+                temp=s+"/"+temp; 
+                mp3find(temp);
             }
-    if(d.isMp3()){                                                                                        
-    mp3file m((string)d.ent->d_name,strin);
+            if(d.isMp3()){                                                                                        //checks for mp3 file
+                mp3file m((string)d.ent->d_name,s);
                 
-    list.push_back(m);                                      
+                list.push_back(m);                                      
             }    
         }
-    closedir(d.direc);
+        closedir(d.dir);
     }
     else
-    cout<<"Couldn't open the directory "<<strin<<endl;
+        cout<<"Couldn't open the directory "<<s<<endl;
 }
 int main(){
-    string path;
+    string inputPath;
     cout<<"Enter the path: "<<endl;
-    cin>>path;
-    mp3find(path);
+    cin>>inputPath;
+    mp3find(inputPath);
     for(int i=0;i<list.size();i++)
-    cout<<list[i].showf()<<"\t"<<list[i].show()<<endl;   
+        cout<<list[i].showFile()<<"\t"<<list[i].showPath()<<endl;   
     return 0;
 }
